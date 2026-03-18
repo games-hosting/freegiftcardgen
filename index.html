@@ -468,63 +468,23 @@
     <button class="btn-main" onclick="goStep(4)">Yes, Give Me My Fake Money ✅</button>
   </div>
 
-  <!-- STEP 4: Fake captchas -->
+  <!-- STEP 4: Dynamic verifications -->
   <div class="step" id="step4">
     <div class="step-header">
-      <div class="step-num">Step 4 of 6</div>
+      <div class="step-num">Step 4 of 5</div>
       <div class="step-title">Prove You're Human 🤖</div>
-      <div class="step-subtitle">Our state-of-the-art AI security system requires you to complete the following extremely rigorous verification steps.</div>
+      <div class="step-subtitle">Our state-of-the-art AI security system requires you to complete the following extremely rigorous verification steps. They appear one at a time for maximum inconvenience.</div>
     </div>
-
-    <div class="captcha-box">
-      <div class="captcha-check" id="captchaCheck1" onclick="checkCaptcha(1)"></div>
-      <div class="captcha-text">I am not a robot (pinky promise)</div>
-      <div class="captcha-logo"><div>🔒</div>reCAPTCHA<br><span style="font-size:0.45rem">Privacy - Terms</span></div>
-    </div>
-
-    <div class="captcha-box" id="captcha2wrap" style="display:none">
-      <div class="captcha-check" id="captchaCheck2" onclick="checkCaptcha(2)"></div>
-      <div class="captcha-text">I solemnly swear I am up to no good (just kidding, I just want a free fake gift card and nothing else)</div>
-      <div class="captcha-logo"><div>🔒</div>reCAPTCHA<br><span style="font-size:0.45rem">Privacy - Terms</span></div>
-    </div>
-
-    <div class="captcha-box" id="captcha3wrap" style="display:none">
-      <div class="captcha-check" id="captchaCheck3" onclick="checkCaptcha(3)"></div>
-      <div class="captcha-text">I confirm I have read zero (0) of the terms and conditions displayed above</div>
-      <div class="captcha-logo"><div>🔒</div>reCAPTCHA<br><span style="font-size:0.45rem">Privacy - Terms</span></div>
-    </div>
-
-    <div class="captcha-box" id="captcha4wrap" style="display:none">
-      <div class="captcha-check" id="captchaCheck4" onclick="checkCaptcha(4)"></div>
-      <div class="captcha-text">I understand that clicking this checkbox does absolutely nothing of value and yet here I am, clicking it anyway</div>
-      <div class="captcha-logo"><div>🔒</div>reCAPTCHA<br><span style="font-size:0.45rem">Privacy - Terms</span></div>
-    </div>
-
+    <div style="font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:16px" id="verifProgress">Verification 0/? complete</div>
+    <div id="verifContainer"></div>
     <div style="height:10px"></div>
     <button class="btn-main" id="step4Btn" onclick="goStep(5)" disabled>I Am Verified Human →</button>
   </div>
 
-  <!-- STEP 5: Math captcha -->
+  <!-- STEP 5: Fake loading -->
   <div class="step" id="step5">
     <div class="step-header">
-      <div class="step-num">Step 5 of 6</div>
-      <div class="step-title">One Last Security Check 🧮</div>
-      <div class="step-subtitle">Our advanced quantum AI security system requires you to solve the following fiendishly difficult puzzle. Only true gift card enjoyers can pass.</div>
-    </div>
-    <div class="math-box">
-      <div class="math-question" id="mathQuestion">Loading puzzle...</div>
-      <div><input class="math-input" id="mathAnswer" type="number" placeholder="?" oninput="checkMath()"></div>
-      <div class="math-hint">💡 Hint: use your brain. Or a calculator. We literally cannot tell the difference.</div>
-    </div>
-    <div class="error-msg" id="mathError"></div>
-    <div style="height:12px"></div>
-    <button class="btn-main" id="step5Btn" onclick="goStep(6)" disabled>I Am A Genius, Proceed →</button>
-  </div>
-
-  <!-- STEP 6: Fake loading -->
-  <div class="step" id="step6">
-    <div class="step-header">
-      <div class="step-num">Step 6 of 6</div>
+      <div class="step-num">Step 5 of 5</div>
       <div class="step-title">Generating Your Card... 🔮</div>
       <div class="step-subtitle">Please wait while we do extremely complex and important things on your behalf.</div>
     </div>
@@ -538,8 +498,8 @@
     <div class="progress-label" id="progressLabel">0% complete</div>
   </div>
 
-  <!-- STEP 7: Result -->
-  <div class="step" id="step7">
+  <!-- STEP 6: Result -->
+  <div class="step" id="step6">
     <div class="step-header">
       <div class="step-num">🎉 Done!</div>
       <div class="step-title">Your Card is Ready! 💳</div>
@@ -554,15 +514,16 @@
       <div class="gc-amount" id="fcAmount">$0</div>
       <div class="gc-bottom">
         <div class="gc-label">Card Number</div>
-        <div class="gc-code" id="fcCode">XXXX – XXXX – XXXX – XXXX</div>
+        <div class="gc-code" id="fcCode">XXXX-XXXX-XXXX-XXXX</div>
         <div class="gc-row">
-          <div class="gc-pin" id="fcPin">PIN: ●●●●</div>
+          <div class="gc-pin" id="fcPin"></div>
           <div class="gc-exp" id="fcExp">Exp 00/00</div>
         </div>
+        <div style="font-size:0.55rem;opacity:0.45;margin-top:5px;letter-spacing:1px;text-transform:uppercase" id="fcFormat"></div>
       </div>
     </div>
     <div class="result-note">
-      This is a <strong>100% fake</strong> gift card for entertainment only.<br>It has no real value and cannot be redeemed anywhere.<br>But it does look pretty convincing, right? 😄
+      This is a <strong>100% fake</strong> gift card for entertainment only.<br>It has no real value and cannot be redeemed anywhere.<br>But the format is accurate, right? 😄
     </div>
     <div class="btn-row">
       <button class="btn-secondary" onclick="copyFinalCode()">📋 Copy Code</button>
@@ -575,31 +536,148 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Brand definitions ──────────────────────────────────────────────────────
+// codeFormat: array of segment lengths.
+//   positive  = alphanumeric chars
+//   negative  = digits only
+//   's:XX'    = static prefix segment (used literally)
+// sep: separator. pin: PIN digit count (0 = none).
+// codeNote: displayed on card, describes real-world format.
 const brands = [
-  { name: 'Amazon',     emoji: '📦', bg: 'linear-gradient(135deg,#FF9900,#c25800)', fg: '#fff' },
-  { name: 'Netflix',    emoji: '🎬', bg: 'linear-gradient(135deg,#E50914,#7b0008)', fg: '#fff' },
-  { name: 'Spotify',    emoji: '🎵', bg: 'linear-gradient(135deg,#1DB954,#0d6630)', fg: '#fff' },
-  { name: 'Apple',      emoji: '🍎', bg: 'linear-gradient(135deg,#3a3a3a,#111)',    fg: '#fff' },
-  { name: 'Steam',      emoji: '🎮', bg: 'linear-gradient(135deg,#1b2838,#2a475e)', fg: '#c7d5e0' },
-  { name: 'Starbucks',  emoji: '☕', bg: 'linear-gradient(135deg,#00704A,#003d29)', fg: '#fff' },
-  { name: 'PlayStation',emoji: '🕹️', bg: 'linear-gradient(135deg,#00439c,#001f5c)', fg: '#fff' },
-  { name: 'Google Play',emoji: '🔍', bg: 'linear-gradient(135deg,#4285F4,#0a52c4)', fg: '#fff' },
-  { name: 'IKEA',       emoji: '🪑', bg: 'linear-gradient(135deg,#003087,#0053a0)', fg: '#FFDA1A' },
-  { name: 'Uber Eats',  emoji: '🍔', bg: 'linear-gradient(135deg,#06C167,#037040)', fg: '#fff' },
-  { name: 'H&M',        emoji: '👗', bg: 'linear-gradient(135deg,#E50010,#8b0009)', fg: '#fff' },
-  { name: 'Roblox',     emoji: '🧱', bg: 'linear-gradient(135deg,#E8192C,#9b0016)', fg: '#fff' },
+  {
+    // Amazon: XXXX-XXXXXX-XXXX (14 chars, alphanumeric) — official Amazon support
+    name: 'Amazon', emoji: '📦',
+    bg: 'linear-gradient(135deg,#FF9900,#c25800)', fg: '#fff',
+    codeFormat: [4,6,4], sep: '-', pin: 0,
+    codeNote: 'XXXX-XXXXXX-XXXX · 14-char alphanumeric',
+  },
+  {
+    // Netflix: 11-char alphanumeric, no separators — Netflix / multiple sources
+    name: 'Netflix', emoji: '🎬',
+    bg: 'linear-gradient(135deg,#E50914,#7b0008)', fg: '#fff',
+    codeFormat: [11], sep: '', pin: 0,
+    codeNote: '11-char alphanumeric · no dashes',
+  },
+  {
+    // Spotify: SPOT-XXXX-XXXX-XXXX (16-char alphanumeric in 4 groups) — multiple sources
+    name: 'Spotify', emoji: '🎵',
+    bg: 'linear-gradient(135deg,#1DB954,#0d6630)', fg: '#fff',
+    codeFormat: ['s:SPOT',4,4,4], sep: '-', pin: 0,
+    codeNote: 'SPOT-XXXX-XXXX-XXXX · 16-char alphanumeric',
+  },
+  {
+    // Apple: X + 15 alphanumeric chars = 16 total, displayed as XXXX-XXXX-XXXX-XXXX — Apple Support
+    name: 'Apple', emoji: '🍎',
+    bg: 'linear-gradient(135deg,#3a3a3a,#111)', fg: '#fff',
+    codeFormat: ['s:X',3,4,4,4], sep: '-', pin: 0,
+    codeNote: 'Starts with X · 16-char · XXXX-XXXX-XXXX-XXXX',
+  },
+  {
+    // Steam: XXXXX-XXXXX-XXXXX (15 alphanumeric, excludes O/U/I) — Steam community & multiple sources
+    name: 'Steam', emoji: '🎮',
+    bg: 'linear-gradient(135deg,#1b2838,#2a475e)', fg: '#c7d5e0',
+    codeFormat: [5,5,5], sep: '-', pin: 0,
+    codeNote: 'XXXXX-XXXXX-XXXXX · 15-char alphanumeric',
+    steamSafe: true, // exclude O, U, I, S confusable chars
+  },
+  {
+    // Starbucks: 16-digit numeric card number + 8-digit PIN — Starbucks app standard
+    name: 'Starbucks', emoji: '☕',
+    bg: 'linear-gradient(135deg,#00704A,#003d29)', fg: '#fff',
+    codeFormat: [-4,-4,-4,-4], sep: ' ', pin: 8,
+    codeNote: '16-digit numeric · 8-digit PIN',
+  },
+  {
+    // PlayStation: 12-char alphanumeric XXXX-XXXX-XXXX — official PlayStation support page
+    name: 'PlayStation', emoji: '🕹️',
+    bg: 'linear-gradient(135deg,#00439c,#001f5c)', fg: '#fff',
+    codeFormat: [4,4,4], sep: '-', pin: 0,
+    codeNote: 'XXXX-XXXX-XXXX · 12-char alphanumeric',
+  },
+  {
+    // Google Play: 16-char alphanumeric, 4×4 groups — official Google Play Help
+    name: 'Google Play', emoji: '🔍',
+    bg: 'linear-gradient(135deg,#4285F4,#0a52c4)', fg: '#fff',
+    codeFormat: [4,4,4,4], sep: '-', pin: 0,
+    codeNote: 'XXXX-XXXX-XXXX-XXXX · 16-char alphanumeric',
+  },
+  {
+    // IKEA: 17-digit numeric gift card — IKEA standard
+    name: 'IKEA', emoji: '🪑',
+    bg: 'linear-gradient(135deg,#003087,#0053a0)', fg: '#FFDA1A',
+    codeFormat: [-4,-4,-4,-5], sep: ' ', pin: 4,
+    codeNote: '17-digit numeric · 4-digit PIN',
+  },
+  {
+    // Uber Eats: promo codes are alphanumeric, ~16 chars in 4×4 groups
+    name: 'Uber Eats', emoji: '🍔',
+    bg: 'linear-gradient(135deg,#06C167,#037040)', fg: '#fff',
+    codeFormat: [4,4,4,4], sep: '-', pin: 0,
+    codeNote: 'XXXX-XXXX-XXXX-XXXX · 16-char alphanumeric',
+  },
+  {
+    // H&M: 16-digit numeric gift card — standard retail gift card format
+    name: 'H&M', emoji: '👗',
+    bg: 'linear-gradient(135deg,#E50010,#8b0009)', fg: '#fff',
+    codeFormat: [-4,-4,-4,-4], sep: '-', pin: 4,
+    codeNote: '16-digit numeric · 4-digit PIN',
+  },
+  {
+    // Roblox: RI-XXXX-XXXX-XXXX-XXXX (18-char) — Roblox Wiki PIN Code Formats
+    name: 'Roblox', emoji: '🧱',
+    bg: 'linear-gradient(135deg,#E8192C,#9b0016)', fg: '#fff',
+    codeFormat: ['s:RI',4,4,4,4], sep: '-', pin: 0,
+    codeNote: 'RI-XXXX-XXXX-XXXX-XXXX · 18-char',
+  },
 ];
 
 const amounts = [10, 25, 50, 100, 200, 500];
 
+// ── Random code generator ──────────────────────────────────────────────────
+const ALPHA       = 'ABCDEFGHJKLMNPQRTVWXYZ';  // general: no I,O,U,S (common confusables)
+const ALPHA_STEAM = 'ABCDEFGHJKLMNPQRTVWXYZ';  // Steam also drops O,U,I — same set here
+const DIGIT       = '0123456789';
+const ALNUM       = ALPHA + DIGIT;
+const ALNUM_STEAM = ALPHA_STEAM + DIGIT;        // Steam excludes O,U,I
+
+function randSeg(len, steamSafe) {
+  if (typeof len === 'string' && len.startsWith('s:')) return len.slice(2); // static literal
+  const pool = len < 0 ? DIGIT : (steamSafe ? ALNUM_STEAM : ALNUM);
+  const n = Math.abs(len);
+  let s = '';
+  for (let i = 0; i < n; i++) s += pool[Math.floor(Math.random() * pool.length)];
+  return s;
+}
+
+function buildCode(brand) {
+  return brand.codeFormat
+    .map(seg => randSeg(seg, brand.steamSafe))
+    .filter(s => s !== '')   // remove empty (e.g. sep-only artifacts)
+    .join(brand.sep);
+}
+
+function randPin(digits) {
+  let s = '';
+  for (let i = 0; i < digits; i++) s += Math.floor(Math.random() * 10);
+  return s;
+}
+
+function randExp() {
+  const m = String(Math.floor(Math.random()*12)+1).padStart(2,'0');
+  const y = (new Date().getFullYear() + 2 + Math.floor(Math.random()*3)).toString().slice(-2);
+  return `${m}/${y}`;
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
 let selectedBrand = null;
 let selectedAmount = null;
-let mathAnswerCorrect = null;
-let captchasDone = 0;
 let finalCode = '';
+let verificationSteps = []; // generated per run
+let verifIndex = 0;         // which step we're on inside step4
+let totalVerifRequired = 0;
 
-// Build brand grid
-const bg = document.getElementById('brandGrid');
+// ── Build UI ───────────────────────────────────────────────────────────────
+const bgEl = document.getElementById('brandGrid');
 brands.forEach(b => {
   const el = document.createElement('div');
   el.className = 'brand-card';
@@ -610,11 +688,10 @@ brands.forEach(b => {
     selectedBrand = b;
     document.getElementById('step1Btn').disabled = false;
   };
-  bg.appendChild(el);
+  bgEl.appendChild(el);
 });
 
-// Build amount grid
-const ag = document.getElementById('amountGrid');
+const agEl = document.getElementById('amountGrid');
 amounts.forEach(a => {
   const el = document.createElement('div');
   el.className = 'amount-btn';
@@ -625,66 +702,301 @@ amounts.forEach(a => {
     selectedAmount = a;
     document.getElementById('step2Btn').disabled = false;
   };
-  ag.appendChild(el);
+  agEl.appendChild(el);
 });
 
-function setupMath() {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  const ops = ['+', '–', '×'];
+// ── Verification step definitions ─────────────────────────────────────────
+// Each has a type and renders itself into #verifContainer
+const verifPool = [
+  {
+    type: 'checkbox',
+    text: 'I am not a robot (pinky promise)',
+    render(id, onDone) {
+      return checkboxVerif(id, this.text, onDone);
+    }
+  },
+  {
+    type: 'checkbox',
+    text: 'I solemnly swear I am up to no good (just kidding, I just want a fake gift card)',
+    render(id, onDone) { return checkboxVerif(id, this.text, onDone); }
+  },
+  {
+    type: 'checkbox',
+    text: 'I confirm I have read zero (0) of the terms and conditions',
+    render(id, onDone) { return checkboxVerif(id, this.text, onDone); }
+  },
+  {
+    type: 'checkbox',
+    text: 'I understand that clicking this does nothing and yet here I am',
+    render(id, onDone) { return checkboxVerif(id, this.text, onDone); }
+  },
+  {
+    type: 'checkbox',
+    text: 'I acknowledge that gift cards do not grow on trees (or do they?)',
+    render(id, onDone) { return checkboxVerif(id, this.text, onDone); }
+  },
+  {
+    type: 'checkbox',
+    text: 'I promise to use my fake riches responsibly',
+    render(id, onDone) { return checkboxVerif(id, this.text, onDone); }
+  },
+  {
+    type: 'math',
+    render(id, onDone) { return mathVerif(id, onDone); }
+  },
+  {
+    type: 'math',
+    render(id, onDone) { return mathVerif(id, onDone); }
+  },
+  {
+    type: 'typeword',
+    word: 'MONEY',
+    render(id, onDone) { return typewordVerif(id, this.word, onDone); }
+  },
+  {
+    type: 'typeword',
+    word: 'FREEGIFTCARD',
+    render(id, onDone) { return typewordVerif(id, this.word, onDone); }
+  },
+  {
+    type: 'typeword',
+    word: 'IAMHUMAN',
+    render(id, onDone) { return typewordVerif(id, this.word, onDone); }
+  },
+  {
+    type: 'slider',
+    render(id, onDone) { return sliderVerif(id, onDone); }
+  },
+  {
+    type: 'slider',
+    render(id, onDone) { return sliderVerif(id, onDone); }
+  },
+  {
+    type: 'counting',
+    render(id, onDone) { return countingVerif(id, onDone); }
+  },
+];
+
+function checkboxVerif(id, text, onDone) {
+  const wrap = document.createElement('div');
+  wrap.className = 'captcha-box';
+  wrap.innerHTML = `
+    <div class="captcha-check" id="cc_${id}"></div>
+    <div class="captcha-text">${text}</div>
+    <div class="captcha-logo"><div>🔒</div>reCAPTCHA<br><span style="font-size:0.45rem">Privacy - Terms</span></div>
+  `;
+  wrap.querySelector(`#cc_${id}`).onclick = function() {
+    if (this.classList.contains('checked')) return;
+    this.classList.add('checked');
+    this.textContent = '✓';
+    setTimeout(onDone, 300);
+  };
+  return wrap;
+}
+
+function mathVerif(id, onDone) {
+  const a = Math.floor(Math.random() * 12) + 1;
+  const b = Math.floor(Math.random() * 12) + 1;
+  const ops = ['+', '−', '×'];
   const op = ops[Math.floor(Math.random() * ops.length)];
   let ans;
   if (op === '+') ans = a + b;
-  else if (op === '–') ans = a - b;
+  else if (op === '−') ans = a - b;
   else ans = a * b;
-  mathAnswerCorrect = ans;
-  document.getElementById('mathQuestion').textContent = `What is ${a} ${op} ${b}?`;
-  document.getElementById('mathAnswer').value = '';
-  document.getElementById('step5Btn').disabled = true;
-  document.getElementById('mathError').textContent = '';
-}
 
-function checkMath() {
-  const val = parseInt(document.getElementById('mathAnswer').value);
-  const err = document.getElementById('mathError');
-  if (!isNaN(val)) {
-    if (val === mathAnswerCorrect) {
-      err.textContent = '✅ Correct! You are a certified genius.';
-      err.style.color = 'var(--green)';
-      document.getElementById('step5Btn').disabled = false;
-    } else {
-      err.textContent = val < mathAnswerCorrect ? '📉 Too low! Think bigger.' : '📈 Too high! Come back down.';
-      err.style.color = 'var(--red)';
-      document.getElementById('step5Btn').disabled = true;
+  const wrap = document.createElement('div');
+  wrap.className = 'math-box';
+  wrap.innerHTML = `
+    <div class="math-question">${a} ${op} ${b} = ?</div>
+    <input class="math-input" type="number" placeholder="?" id="mi_${id}">
+    <div class="math-hint">Hint: use the brain you were born with</div>
+    <div class="error-msg" id="me_${id}" style="margin-top:8px"></div>
+  `;
+  const input = wrap.querySelector(`#mi_${id}`);
+  const errEl = wrap.querySelector(`#me_${id}`);
+  input.oninput = () => {
+    const v = parseInt(input.value);
+    if (!isNaN(v)) {
+      if (v === ans) {
+        errEl.style.color = 'var(--green)';
+        errEl.textContent = '✅ Genius confirmed.';
+        input.disabled = true;
+        setTimeout(onDone, 500);
+      } else {
+        errEl.style.color = 'var(--red)';
+        errEl.textContent = v < ans ? '📉 Too low!' : '📈 Too high!';
+      }
     }
+  };
+  return wrap;
+}
+
+function typewordVerif(id, word, onDone) {
+  const wrap = document.createElement('div');
+  wrap.className = 'math-box';
+  wrap.innerHTML = `
+    <div class="math-question" style="font-size:1rem;color:var(--text)">Type exactly: <span style="color:var(--yellow);font-size:1.3rem;display:block;margin-top:6px">${word}</span></div>
+    <input class="math-input" type="text" placeholder="type here..." id="tw_${id}" style="width:100%;max-width:260px;letter-spacing:3px;text-transform:uppercase" autocomplete="off">
+    <div class="error-msg" id="twe_${id}" style="margin-top:8px"></div>
+  `;
+  const input = wrap.querySelector(`#tw_${id}`);
+  const errEl = wrap.querySelector(`#twe_${id}`);
+  input.oninput = () => {
+    const v = input.value.toUpperCase().trim();
+    if (v === word) {
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = '✅ Spell-check passed.';
+      input.disabled = true;
+      setTimeout(onDone, 400);
+    } else if (word.startsWith(v) || v.length === 0) {
+      errEl.textContent = '';
+    } else {
+      errEl.style.color = 'var(--red)';
+      errEl.textContent = '❌ That\'s not it...';
+    }
+  };
+  return wrap;
+}
+
+function sliderVerif(id, onDone) {
+  const target = Math.floor(Math.random() * 31) + 60; // 60–90
+  const wrap = document.createElement('div');
+  wrap.className = 'math-box';
+  wrap.innerHTML = `
+    <div class="math-question" style="font-size:1rem;color:var(--text)">Slide to exactly <span style="color:var(--yellow)">${target}%</span></div>
+    <input type="range" id="sl_${id}" min="0" max="100" value="0" style="width:100%;margin:14px 0;accent-color:var(--green)">
+    <div style="font-size:0.85rem;color:var(--muted)" id="slv_${id}">0%</div>
+    <div class="error-msg" id="sle_${id}" style="margin-top:6px"></div>
+  `;
+  const slider = wrap.querySelector(`#sl_${id}`);
+  const valEl  = wrap.querySelector(`#slv_${id}`);
+  const errEl  = wrap.querySelector(`#sle_${id}`);
+  let done = false;
+  slider.oninput = () => {
+    if (done) return;
+    const v = parseInt(slider.value);
+    valEl.textContent = v + '%';
+    const diff = Math.abs(v - target);
+    if (diff <= 2) {
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = '✅ Close enough. We\'ll allow it.';
+      slider.disabled = true;
+      done = true;
+      setTimeout(onDone, 500);
+    } else if (diff <= 6) {
+      errEl.style.color = 'var(--yellow)';
+      errEl.textContent = v < target ? '🔥 Getting warmer...' : '❄️ A tiny bit left...';
+    } else {
+      errEl.style.color = 'var(--red)';
+      errEl.textContent = v < target ? '⬅️ Too low' : '➡️ Too high';
+    }
+  };
+  return wrap;
+}
+
+function countingVerif(id, onDone) {
+  const emoji = ['🍕','🎈','⭐','🐸','💎','🍀','🎯','🦄'][Math.floor(Math.random()*8)];
+  const count = Math.floor(Math.random() * 6) + 4; // 4–9
+  let grid = '';
+  const decoys = ['🔥','💀','🤡','👾','🎪','🌚'];
+  const decoy = decoys[Math.floor(Math.random()*decoys.length)];
+  const positions = [];
+  for (let i = 0; i < count; i++) positions.push(i);
+  // fill 16 cell grid
+  const cells = [];
+  for (let i = 0; i < 16; i++) cells.push(positions.includes(i) ? emoji : decoy);
+  // shuffle
+  cells.sort(() => Math.random() - 0.5);
+  grid = cells.map(e => `<span style="font-size:1.5rem;cursor:default">${e}</span>`).join('');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'math-box';
+  wrap.innerHTML = `
+    <div class="math-question" style="font-size:1rem;color:var(--text)">How many <span style="font-size:1.4rem">${emoji}</span> do you see?</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px auto;max-width:200px;background:#111;padding:12px;border-radius:10px">${grid}</div>
+    <input class="math-input" type="number" placeholder="?" id="cnt_${id}" min="0" max="20">
+    <div class="error-msg" id="cnte_${id}" style="margin-top:8px"></div>
+  `;
+  const input = wrap.querySelector(`#cnt_${id}`);
+  const errEl = wrap.querySelector(`#cnte_${id}`);
+  input.oninput = () => {
+    const v = parseInt(input.value);
+    if (!isNaN(v)) {
+      if (v === count) {
+        errEl.style.color = 'var(--green)';
+        errEl.textContent = `✅ Correct! There were ${count}. You can count!`;
+        input.disabled = true;
+        setTimeout(onDone, 500);
+      } else {
+        errEl.style.color = 'var(--red)';
+        errEl.textContent = '❌ Look again...';
+      }
+    }
+  };
+  return wrap;
+}
+
+// ── Verification orchestration ─────────────────────────────────────────────
+function buildVerificationSteps() {
+  // Pick 3–6 random steps, always include at least one checkbox and one non-checkbox
+  const shuffled = [...verifPool].sort(() => Math.random() - 0.5);
+  const count = Math.floor(Math.random() * 4) + 3; // 3 to 6
+  verificationSteps = shuffled.slice(0, count);
+  totalVerifRequired = verificationSteps.length;
+  verifIndex = 0;
+}
+
+function renderNextVerif() {
+  const container = document.getElementById('verifContainer');
+  if (verifIndex >= totalVerifRequired) {
+    document.getElementById('step4Btn').disabled = false;
+    return;
   }
+  const stepDef = verificationSteps[verifIndex];
+  const id = 'v' + verifIndex + '_' + Date.now();
+  const el = stepDef.render(id, () => {
+    verifIndex++;
+    updateVerifProgress();
+    setTimeout(renderNextVerif, 600);
+  });
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(10px)';
+  el.style.transition = 'opacity 0.3s, transform 0.3s';
+  container.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }));
 }
 
-function checkCaptcha(n) {
-  const el = document.getElementById(`captchaCheck${n}`);
-  if (el.classList.contains('checked')) return;
-  el.classList.add('checked');
-  el.textContent = '✓';
-  captchasDone++;
-  if (n === 1) setTimeout(() => { document.getElementById('captcha2wrap').style.display = 'flex'; }, 700);
-  if (n === 2) setTimeout(() => { document.getElementById('captcha3wrap').style.display = 'flex'; }, 700);
-  if (n === 3) setTimeout(() => { document.getElementById('captcha4wrap').style.display = 'flex'; }, 700);
-  if (captchasDone >= 4) document.getElementById('step4Btn').disabled = false;
+function updateVerifProgress() {
+  const done = verifIndex;
+  const total = totalVerifRequired;
+  document.getElementById('verifProgress').textContent =
+    `Verification ${done}/${total} complete`;
 }
 
+// ── Step navigation ────────────────────────────────────────────────────────
 function goStep(n) {
   if (n === 3) {
     document.getElementById('confirmBrand').textContent = selectedBrand.name;
     document.getElementById('confirmAmount').textContent = '$' + selectedAmount;
   }
-  if (n === 5) setupMath();
-  if (n === 6) startGenerating();
+  if (n === 4) {
+    buildVerificationSteps();
+    document.getElementById('verifContainer').innerHTML = '';
+    document.getElementById('step4Btn').disabled = true;
+    document.getElementById('verifProgress').textContent = `Verification 0/${totalVerifRequired} complete`;
+    setTimeout(renderNextVerif, 300);
+  }
+  if (n === 5) { startGenerating(); }
 
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('step' + n).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ── Loading screen ─────────────────────────────────────────────────────────
 const loadingMsgs = [
   'Connecting to gift card servers...',
   'Bypassing absolutely nothing...',
@@ -692,81 +1004,80 @@ const loadingMsgs = [
   'Consulting the gift card oracle...',
   'Printing money (digitally, fictionally)...',
   'Running advanced AI algorithms...',
-  'Checking if you deserve this...',
-  'Inflating fake balance...',
+  'Verifying your fake identity...',
+  'Inflating balance to desired amount...',
   'Polishing card with a tiny cloth...',
   'Almost there... seriously this time...',
-  'Adding fake expiry date...',
+  'Adding security hologram (fake)...',
   'Done! (wait, one more second)...',
 ];
 
 function startGenerating() {
-  let pct = 0;
-  let msgIdx = 0;
-  const fill = document.getElementById('progressFill');
+  let pct = 0, msgIdx = 0;
+  const fill  = document.getElementById('progressFill');
   const label = document.getElementById('progressLabel');
-  const msg = document.getElementById('spinnerMsg');
+  const msg   = document.getElementById('spinnerMsg');
+
+  // Occasionally stall for drama
+  let stallAt = Math.random() > 0.5 ? Math.floor(Math.random() * 30) + 40 : -1;
+  let stalled = false;
 
   const interval = setInterval(() => {
-    pct += Math.random() * 3 + 0.5;
+    if (stalled) return;
+    let inc = Math.random() * 3.5 + 0.5;
+    if (pct > 70) inc *= 0.5; // slow down near the end for drama
+    pct += inc;
+    if (pct >= stallAt && stallAt > 0 && !stalled) {
+      stalled = true;
+      msg.textContent = 'Hmm, this is taking longer than expected...';
+      setTimeout(() => { stalled = false; stallAt = -1; }, 2200);
+      return;
+    }
     if (pct > 100) pct = 100;
     fill.style.width = pct + '%';
     label.textContent = Math.floor(pct) + '% complete';
-    const msgThreshold = Math.floor(msgIdx * (100 / loadingMsgs.length));
-    if (pct > msgThreshold && msgIdx < loadingMsgs.length) {
-      msg.textContent = loadingMsgs[msgIdx++];
-    }
-    if (pct >= 100) {
-      clearInterval(interval);
-      setTimeout(showResult, 700);
-    }
+    const thresh = msgIdx * (100 / loadingMsgs.length);
+    if (pct > thresh && msgIdx < loadingMsgs.length) msg.textContent = loadingMsgs[msgIdx++];
+    if (pct >= 100) { clearInterval(interval); setTimeout(showResult, 800); }
   }, 110);
 }
 
-function randSeg() { return Math.random().toString(36).substring(2, 6).toUpperCase(); }
-function randCode() { return `${randSeg()} – ${randSeg()} – ${randSeg()} – ${randSeg()}`; }
-function randPin() { return String(Math.floor(1000 + Math.random() * 9000)); }
-function randExp() {
-  const m = String(Math.floor(Math.random()*12)+1).padStart(2,'0');
-  const y = (new Date().getFullYear() + 2 + Math.floor(Math.random()*3)).toString().slice(-2);
-  return `${m}/${y}`;
-}
-
+// ── Final card ─────────────────────────────────────────────────────────────
 function showResult() {
-  finalCode = randCode();
+  finalCode = buildCode(selectedBrand);
+  const pinDigits = selectedBrand.pin;
+  const pinStr = pinDigits ? 'PIN: ' + randPin(pinDigits) : '';
+  const exp = randExp();
+
   const card = document.getElementById('finalCard');
   card.style.background = selectedBrand.bg;
   card.style.color = selectedBrand.fg;
   document.getElementById('fcBrand').textContent = selectedBrand.name;
   document.getElementById('fcAmount').textContent = '$' + selectedAmount;
   document.getElementById('fcCode').textContent = finalCode;
-  document.getElementById('fcPin').textContent = 'PIN: ' + randPin();
-  document.getElementById('fcExp').textContent = 'Exp ' + randExp();
+  document.getElementById('fcPin').textContent = pinStr;
+  document.getElementById('fcExp').textContent = pinStr ? 'Exp ' + exp : 'Exp ' + exp;
+  document.getElementById('fcFormat').textContent = 'Format: ' + selectedBrand.codeNote;
 
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step7').classList.add('active');
+  document.getElementById('step6').classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
   launchConfetti();
 }
 
 function copyFinalCode() {
-  navigator.clipboard.writeText(finalCode.replace(/ – /g, '-')).then(() => showToast('📋 Fake code copied!'));
+  navigator.clipboard.writeText(finalCode).then(() => showToast('📋 Fake code copied!'));
 }
 
 function startOver() {
-  selectedBrand = null; selectedAmount = null; captchasDone = 0; finalCode = '';
+  selectedBrand = null; selectedAmount = null; finalCode = '';
+  verifIndex = 0; verificationSteps = [];
   document.querySelectorAll('.brand-card').forEach(x => x.classList.remove('selected'));
   document.querySelectorAll('.amount-btn').forEach(x => x.classList.remove('selected'));
   document.getElementById('step1Btn').disabled = true;
   document.getElementById('step2Btn').disabled = true;
   document.getElementById('step4Btn').disabled = true;
-  [1,2,3,4].forEach(n => {
-    const el = document.getElementById('captchaCheck' + n);
-    if (el) { el.classList.remove('checked'); el.textContent = ''; }
-  });
-  ['captcha2wrap','captcha3wrap','captcha4wrap'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
-  });
+  document.getElementById('verifContainer').innerHTML = '';
   document.getElementById('progressFill').style.width = '0%';
   document.getElementById('progressLabel').textContent = '0% complete';
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -783,32 +1094,24 @@ function showToast(msg) {
 
 function launchConfetti() {
   const colors = ['#ffd600','#00e676','#ff1744','#40c4ff','#e040fb','#ff6d00','#fff'];
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 80; i++) {
     const c = document.createElement('div');
     c.className = 'confetti-piece';
-    const size = Math.random() * 9 + 6;
-    c.style.cssText = `
-      left:${Math.random()*100}vw;
-      width:${size}px; height:${size}px;
+    const size = Math.random() * 10 + 6;
+    c.style.cssText = `left:${Math.random()*100}vw;width:${size}px;height:${size}px;
       background:${colors[Math.floor(Math.random()*colors.length)]};
-      animation-duration:${Math.random()*2+1.5}s;
-      animation-delay:${Math.random()*0.8}s;
-      transform:rotate(${Math.random()*360}deg);
-      border-radius:${Math.random()>0.5?'50%':'2px'};
-    `;
+      animation-duration:${Math.random()*2+1.5}s;animation-delay:${Math.random()*0.9}s;
+      transform:rotate(${Math.random()*360}deg);border-radius:${Math.random()>0.5?'50%':'2px'};`;
     document.body.appendChild(c);
-    setTimeout(() => c.remove(), 4000);
+    setTimeout(() => c.remove(), 4500);
   }
 }
 
-// Animate fake live counters
 setInterval(() => {
   const v = document.getElementById('liveVisitors');
-  const cur = parseInt(v.textContent.replace(/,/g,''));
-  v.textContent = Math.max(100, cur + Math.floor(Math.random()*7-3)).toLocaleString();
+  v.textContent = Math.max(100, parseInt(v.textContent.replace(/,/g,'')) + Math.floor(Math.random()*7-3)).toLocaleString();
   const c = document.getElementById('liveCards');
-  const cur2 = parseInt(c.textContent.replace(/,/g,''));
-  c.textContent = (cur2 + Math.floor(Math.random()*4+1)).toLocaleString();
+  c.textContent = (parseInt(c.textContent.replace(/,/g,'')) + Math.floor(Math.random()*4+1)).toLocaleString();
 }, 2000);
 </script>
 </body>
